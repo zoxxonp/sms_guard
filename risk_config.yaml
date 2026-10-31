@@ -1,0 +1,14 @@
+# Параметры модуля оценки риска (раздел 2.5 и задание 13 ТЗ).
+# Начальные значения; уточняются калибровкой на валидационной выборке.
+version: 0.1.0
+weights:
+  w_sms: 0.5
+  w_url: 0.3
+  w_se: 0.2
+levels:          # границы уровней Risk Score
+  low_max: 34
+  medium_max: 69
+overrides:
+  code_request_min: 70
+  sms_and_url_high_min: 85
+  ip_or_punycode_min: 60

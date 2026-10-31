@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="p-4 p-md-5 bg-body-tertiary rounded-3 border">
+      <h1 class="h3 mb-3">
+        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+        Интеллектуальная система обнаружения мошеннических SMS
+      </h1>
+      <p class="lead mb-4">
+        SMS Guard анализирует текст сообщения и ссылки в нём с помощью моделей
+        машинного обучения, рассчитывает уровень риска и объясняет результат.
+      </p>
+      <div class="alert alert-secondary mb-4" role="status">
+        <i class="bi bi-tools" aria-hidden="true"></i>
+        Проект в разработке: каркас приложения готов, модули анализа появятся в следующих заданиях.
+      </div>
+      <ul class="list-unstyled mb-0">
+        <li><i class="bi bi-check2 text-success" aria-hidden="true"></i> Проверка SMS: текст + до 3 ссылок</li>
+        <li><i class="bi bi-check2 text-success" aria-hidden="true"></i> Проверка URL без открытия ссылки</li>
+        <li><i class="bi bi-check2 text-success" aria-hidden="true"></i> Risk Score 0–100 с объяснением причин</li>
+        <li><i class="bi bi-check2 text-success" aria-hidden="true"></i> История проверок и статистика</li>
+      </ul>
+    </div>
+    <p class="text-muted small mt-3">
+      Состояние сервиса: <code>GET /api/v1/health/</code>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+/* SMS Guard — общие стили. Акцентные цвета используются только для категорий риска. */
+:root {
+  --guard-primary: #1f3a5f;
+  --risk-safe: #198754;
+  --risk-suspicious: #b58105;
+  --risk-fraud: #c62828;
+}
+
+.bg-guard {
+  background-color: var(--guard-primary);
+}
+
+.badge-safe { background-color: var(--risk-safe); }
+.badge-suspicious { background-color: var(--risk-suspicious); }
+.badge-fraud { background-color: var(--risk-fraud); }

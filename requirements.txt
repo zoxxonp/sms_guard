@@ -1,27 +1,27 @@
-# SMS Guard — зависимости (Python 3.11+). Версии зафиксированы до минорной.
+# SMS Guard - dependencies (Python 3.11+). Versions pinned to minor release.
 # Web
 Django==5.2.*
 djangorestframework==3.16.*
 django-environ==0.12.*
-psycopg[binary]==3.2.*        # PostgreSQL для демонстрационной сборки
+psycopg[binary]==3.2.*        # PostgreSQL for the demo build
 
-# Данные и ML
+# Data and ML
 pandas==2.2.*
 numpy==2.1.*
 scikit-learn==1.5.*
 joblib==1.4.*
 PyYAML==6.0.*
 
-# NLP и URL
+# NLP and URL parsing
 nltk==3.9.*
 langdetect==1.0.9
 tldextract==5.1.*
 
-# Исследования и графики
+# Notebooks and plots
 notebook==7.2.*
 matplotlib==3.9.*
 
-# Тестирование
+# Testing
 pytest==8.3.*
 pytest-django==4.9.*
 pytest-cov==5.0.*

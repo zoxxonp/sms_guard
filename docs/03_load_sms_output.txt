@@ -1,0 +1,32 @@
+Кодировка исходного файла: utf-8
+Непустых строк в исходном файле: 5574
+Строк в DataFrame: 5574
+Некорректных строк: 0
+Пропуски по столбцам: {'id': 0, 'text': 0, 'label': 0}
+Пустые тексты: 0
+Точных дубликатов текста: 403 (удаляются в задании 4)
+
+Типы столбцов:
+id        int64
+text     string
+label      int8
+
+Распределение классов:
+  0 — ham (безопасное)        4827  (86.60%)
+  1 — spam (мошенничество)     747  (13.40%)
+
+Примеры класса 0 — ham (безопасное):
+  [   1] Go until jurong point, crazy.. Available only in bugis n great world la e buffet... Cine there got amore wa...
+  [   2] Ok lar... Joking wif u oni...
+  [   4] U dun say so early hor... U c already then say...
+  [   5] Nah I don't think he goes to usf, he lives around here though
+  [   7] Even my brother is not like to speak with me. They treat me like aids patent.
+
+Примеры класса 1 — spam (мошенничество):
+  [   3] Free entry in 2 a wkly comp to win FA Cup final tkts 21st May 2005. Text FA to 87121 to receive entry quest...
+  [   6] FreeMsg Hey there darling it's been 3 week's now and no word back! I'd like some fun you up for it still? T...
+  [   9] WINNER!! As a valued network customer you have been selected to receivea £900 prize reward! To claim call 0...
+  [  10] Had your mobile 11 months or more? U R entitled to Update to the latest colour mobiles with camera for Free...
+  [  12] SIX chances to win CASH! From 100 to 20,000 pounds txt> CSH11 and send to 87575. Cost 150p/day, 6days, 16+ ...
+
+Сохранено: data/processed/sms_raw.csv

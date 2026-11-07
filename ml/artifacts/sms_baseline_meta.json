@@ -2,28 +2,28 @@
   "model": "sms_baseline",
   "version": "0.1.0",
   "algorithm": "LogisticRegression(class_weight='balanced', max_iter=1000)",
-  "features": "TF-IDF words (1,2) + TF-IDF char_wb (3,5) + 8 manual features",
+  "features": "TF-IDF words (1,2) + TF-IDF char_wb (3,5) + manual: len_chars_log, n_words, upper_ratio, n_exclaim, has_url, has_money, has_phone, n_rule_groups",
   "n_features": 33494,
   "threshold": 0.5,
   "trained_on": "train (3594 SMS), data/processed/sms_split.json",
   "metrics_split": "validation (770 SMS)",
   "metrics": {
-    "Accuracy": 0.9844,
-    "Precision (мошенничество)": 0.9655,
-    "Recall (мошенничество)": 0.9032,
-    "F1 (мошенничество)": 0.9333,
-    "F1 (macro)": 0.9623,
-    "ROC-AUC": 0.9939,
-    "PR-AUC": 0.9796
+    "accuracy": 0.9844,
+    "precision_fraud": 0.9655,
+    "recall_fraud": 0.9032,
+    "f1_fraud": 0.9333,
+    "f1_macro": 0.9623,
+    "roc_auc": 0.9939,
+    "pr_auc": 0.9796,
+    "confusion_matrix": {
+      "tn": 674,
+      "fp": 3,
+      "fn": 9,
+      "tp": 84
+    }
   },
-  "confusion_matrix": {
-    "tn": 674,
-    "fp": 3,
-    "fn": 9,
-    "tp": 84
-  },
-  "train_seconds": 0.71,
-  "predict_ms_per_sms": 4.03,
-  "created": "2026-11-07 10:38",
-  "sklearn": "1.9.1"
+  "train_seconds": 3.02,
+  "created": "2026-11-07 11:05",
+  "python": "3.11.9",
+  "sklearn": "1.5.2"
 }

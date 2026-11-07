@@ -204,7 +204,7 @@ def main() -> int:
     examples = pd.concat([examples, url_example]).drop_duplicates("id")
 
     CLEAN_CSV.parent.mkdir(parents=True, exist_ok=True)
-    clean.to_csv(CLEAN_CSV, index=False, encoding="utf-8")
+    clean.to_csv(CLEAN_CSV, index=False, encoding="utf-8", lineterminator="\n")
     REPORT_MD.write_text(write_report(steps, classes, dup, examples), encoding="utf-8")
 
     print(pd.DataFrame(steps).to_string(index=False))

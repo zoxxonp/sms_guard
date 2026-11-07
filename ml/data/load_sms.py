@@ -118,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(args.output, index=False, encoding="utf-8")
+    df.to_csv(args.output, index=False, encoding="utf-8", lineterminator="\n")
     print(f"\nСохранено: {args.output.relative_to(PROJECT_ROOT) if args.output.is_relative_to(PROJECT_ROOT) else args.output}")
     return 0
 

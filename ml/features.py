@@ -32,6 +32,8 @@ from ml.rules import count_rule_groups
 RANDOM_STATE = 42
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SPLIT_PATH = PROJECT_ROOT / "data" / "processed" / "sms_split.json"
+SYNTH_PATH = PROJECT_ROOT / "data" / "raw" / "synthetic_ru_kk.csv"
+SYNTH_SPLIT_PATH = PROJECT_ROOT / "data" / "processed" / "synthetic_split.json"
 
 MANUAL_FEATURES = [
     "len_chars_log",    # log(1 + длина исходного текста в символах)
@@ -59,6 +61,62 @@ def split_dataset(df: pd.DataFrame, label_col: str = "label",
     return {"train": sorted(map(int, train_ids)),
             "val": sorted(map(int, val_ids)),
             "test": sorted(map(int, test_ids))}
+
+
+def split_by_template(df: pd.DataFrame, random_state: int = RANDOM_STATE,
+                      share: float = 0.15) -> dict[str, list[int]]:
+    """Разбиение синтетического набора ПО ШАБЛОНАМ (template_id), примерно 70 / 15 / 15.
+
+    Все сообщения одного шаблона попадают в одну выборку, поэтому на validation и test
+    модель видит формулировки, которых не было при обучении. Шаблоны делятся внутри
+    каждой тройки (язык, класс, категория): в validation и test идёт по ~15% шаблонов
+    категории (минимум по одному), остальные — в train. Так каждая категория каждого
+    языка представлена и в обучении, и в проверке.
+    """
+    rng = np.random.default_rng(random_state)
+    parts: dict[str, list[int]] = {"train": [], "val": [], "test": []}
+    for _, group in df.groupby(["lang", "label", "category"], sort=True):
+        templates = np.array(sorted(group["template_id"].unique()))
+        rng.shuffle(templates)
+        n_hold = max(1, int(round(len(templates) * share)))
+        assign = {t: "val" for t in templates[:n_hold]}
+        assign.update({t: "test" for t in templates[n_hold:2 * n_hold]})
+        assign.update({t: "train" for t in templates[2 * n_hold:]})
+        for part in parts:
+            parts[part] += group.loc[group["template_id"].map(assign) == part, "id"].astype(int).tolist()
+    return {k: sorted(v) for k, v in parts.items()}
+
+
+def save_synthetic_split(split: dict[str, list[int]], df: pd.DataFrame,
+                         path: Path = SYNTH_SPLIT_PATH) -> None:
+    by_id = df.set_index("id")
+    meta = {
+        "source": "data/raw/synthetic_ru_kk.csv",
+        "method": "split by template_id within (lang, label, category), ~70/15/15",
+        "random_state": RANDOM_STATE,
+        "sizes": {k: len(v) for k, v in split.items()},
+        "templates": {k: int(by_id.loc[v, "template_id"].nunique()) for k, v in split.items()},
+        "by_lang_label": {k: {f"{lang}_{lab}": int(n) for (lang, lab), n in
+                              by_id.loc[v].groupby(["lang", "label"]).size().items()}
+                          for k, v in split.items()},
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"meta": meta, **split}, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
+def load_synthetic(path: Path = SYNTH_PATH, split_path: Path = SYNTH_SPLIT_PATH) -> dict[str, pd.DataFrame]:
+    """Синтетический ru/kk-набор, разделённый по шаблонам: {'train', 'val', 'test'}.
+
+    К каждой части добавлены столбцы text_raw / text_clean (вход Pipeline).
+    """
+    df = pd.read_csv(path, keep_default_na=False)
+    df["text_raw"] = df["text"]
+    df["text_clean"] = df["text"].map(normalize_sms)
+    if not split_path.exists():
+        save_synthetic_split(split_by_template(df), df, split_path)
+    data = json.loads(split_path.read_text(encoding="utf-8"))
+    by_id = df.set_index("id", drop=False)
+    return {part: by_id.loc[data[part]].reset_index(drop=True) for part in ("train", "val", "test")}
 
 
 def save_split(split: dict[str, list[int]], df: pd.DataFrame, path: Path = SPLIT_PATH) -> None:

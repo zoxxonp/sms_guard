@@ -40,7 +40,7 @@ SPECIAL_TOKENS = ("<url>", "<email>", "<phone>", "<money>", "<num>")
 
 # Шаблон токенизации для TfidfVectorizer: спецтокены, «!», «?» и слова от 2 букв.
 # \w в Python учитывает Unicode, поэтому кириллица и казахские буквы сохраняются.
-TOKEN_PATTERN = r"<(?:url|email|phone|money|num)>|[!?]|(?u)\b\w\w+\b"
+TOKEN_PATTERN = r"<(?:url|email|phone|money|num)>|[!?]|\b\w\w+\b"
 
 # --- Регулярные выражения сущностей ---------------------------------------------
 

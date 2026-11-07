@@ -48,14 +48,31 @@ python manage.py check
 pytest
 ```
 
-## Данные
+## Данные и модель
 
-Набор UCI SMS Spam Collection (задание 3):
+Команды выполняются из корня проекта по порядку:
 
 ```bash
-python ml/data/download_sms.py   # скачивает архив с UCI в data/raw/ и проверяет файл
-python ml/data/load_sms.py       # приводит к виду id, text, label → data/processed/sms_raw.csv
+python ml/data/download_sms.py   # задание 3: скачать набор с UCI в data/raw/
+python ml/data/load_sms.py       # задание 3: → data/processed/sms_raw.csv (id, text, label)
+python -m ml.data.clean_sms      # задание 4: очистка → data/processed/sms_clean.csv + отчёт
+python -m ml.train_baseline      # задание 7: обучение baseline → ml/artifacts/sms_baseline.joblib
 ```
+
+Разбиение train / val / test хранится в `data/processed/sms_split.json` (задание 6); если файла нет,
+`ml.train_baseline` создаёт его заново с `random_state=42`.
+
+Ноутбуки исследований (выводы и графики уже сохранены внутри):
+
+```bash
+jupyter notebook notebooks/
+```
+
+| Ноутбук | Задание |
+| :--- | :--- |
+| `01_eda_sms.ipynb` | 5 — исследовательский анализ |
+| `02_features_sms.ipynb` | 6 — разбиение и признаки |
+| `03_baseline_sms.ipynb` | 7 — baseline-модель |
 
 Паспорт набора — `docs/03_dataset_passport.md`.
 
@@ -66,12 +83,13 @@ config/          настройки Django, urls.py, wsgi.py
 apps/accounts/   регистрация, вход, профиль
 apps/analysis/   сервис анализа, API, модели БД проверок
 apps/dashboard/  статистика и графики
-ml/              предобработка, признаки URL, правила, риск, предсказание
-ml/data/         скрипты загрузки наборов данных
-artifacts/       сохранённые модели (*.joblib) и метаданные
+ml/              предобработка, признаки, словарь правил, модели, предсказание
+ml/data/         скрипты загрузки и очистки наборов данных
+ml/artifacts/    сохранённые модели (*.joblib, не в git) и метаданные (*.json)
 notebooks/       Jupyter-ноутбуки исследований
 data/raw/        исходные наборы данных (без изменений)
 data/processed/  обработанные данные и индексы разбиения
+docs/figures/    графики для отчётов
 templates/       HTML-шаблоны (Bootstrap 5)
 static/          CSS, JS
 tests/           pytest
@@ -86,3 +104,7 @@ logs/            app.log с ротацией (не в репозитории)
 | 1 | `docs/01_domain_analysis.md`, `docs/diagrams/use_case.puml/.png` |
 | 2 | Каркас Django, health-эндпоинт, логирование, README |
 | 3 | `ml/data/load_sms.py`, `data/processed/sms_raw.csv`, паспорт набора, `data/raw/custom_ru_kk.csv` |
+| 4 | `ml/preprocessing.py` (`normalize_sms`), `data/processed/sms_clean.csv`, `docs/04_preprocessing_report.md`, `tests/test_preprocessing.py` |
+| 5 | `notebooks/01_eda_sms.ipynb`, `docs/figures/05_*.png`, `docs/05_eda_report.md` |
+| 6 | `ml/features.py`, `ml/rules.py`, `data/processed/sms_split.json`, `notebooks/02_features_sms.ipynb`, `docs/06_features.md` |
+| 7 | `ml/predictor.py` (`predict_sms`), `ml/train_baseline.py`, `notebooks/03_baseline_sms.ipynb`, `docs/07_baseline_report.md` |

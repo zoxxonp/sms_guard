@@ -125,7 +125,7 @@ REST_FRAMEWORK = {
 }
 
 # --- Пути к ML-артефактам -----------------------------------------------------
-ARTIFACTS_DIR = BASE_DIR / "artifacts"
+ARTIFACTS_DIR = BASE_DIR / "ml" / "artifacts"
 RISK_CONFIG_PATH = BASE_DIR / "risk_config.yaml"
 
 # --- Логирование (НФТ-13): logs/app.log, ротация 5 файлов по 1 МБ --------------

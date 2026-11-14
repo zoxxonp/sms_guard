@@ -27,10 +27,15 @@ MULTI_PATH = ARTIFACTS_DIR / "sms_baseline_multi.joblib"
 MULTI_META_PATH = ARTIFACTS_DIR / "sms_baseline_multi_meta.json"
 
 
+SMS_MODEL_PATH = ARTIFACTS_DIR / "sms_model.joblib"
+SMS_MODEL_META_PATH = ARTIFACTS_DIR / "sms_model_meta.json"
+
+
 def default_model_paths() -> tuple[Path, Path]:
-    """Многоязычная модель (en + ru + kk), если она обучена, иначе английская baseline."""
-    if MULTI_PATH.exists():
-        return MULTI_PATH, MULTI_META_PATH
+    """Итоговая модель задания 8, если она обучена; иначе многоязычная baseline; иначе английская."""
+    for model, meta in ((SMS_MODEL_PATH, SMS_MODEL_META_PATH), (MULTI_PATH, MULTI_META_PATH)):
+        if model.exists():
+            return model, meta
     return BASELINE_PATH, BASELINE_META_PATH
 
 LABELS = {0: "safe", 1: "fraud"}

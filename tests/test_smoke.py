@@ -10,10 +10,13 @@ def test_home_page_opens(client):
     assert "SMS Guard" in response.content.decode("utf-8")
 
 
-def test_health_endpoint(client):
+def test_health_endpoint(client, use_toy_predictor):
     response = client.get("/api/v1/health/")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    data = response.json()
+    assert data["status"] == "ok"
+    assert data["models"]["sms"]["loaded"] and data["models"]["url"]["loaded"]
+    assert "error" not in data["models"]["sms"]
 
 
 def test_session_cookie_settings(settings):

@@ -1,14 +1,61 @@
 # Параметры модуля оценки риска (раздел 2.5 и задание 13 ТЗ).
-# Начальные значения; уточняются калибровкой на валидационной выборке.
-version: 0.1.0
+# Веса и границы уровней подобраны на validation SMS и собственном наборе (notebooks/08_risk_calibration.ipynb).
+# Изменение этого файла меняет результат без правки кода (файл перечитывается при изменении).
+version: 1.0.0
+
+# RiskScore = 100 · (w_sms·P_sms + w_url·P_url,max + w_se·S_se) / (w_sms + w_url·[URL есть] + w_se),
+# S_se = min(k / se_saturation, 1), k — число сработавших групп социальной инженерии.
 weights:
   w_sms: 0.5
   w_url: 0.3
   w_se: 0.2
-levels:          # границы уровней Risk Score
+se_saturation: 3
+
+# Уровни: низкий 0..low_max, средний ..medium_max, высокий — выше.
+levels:
   low_max: 34
   medium_max: 69
+
+# Правила усиления (применяются после формулы)
 overrides:
-  code_request_min: 70
-  sms_and_url_high_min: 85
-  ip_or_punycode_min: 60
+  code_request_min: 70          # сработала группа CODE_REQUEST
+  sms_and_url_high_min: 85      # P_sms ≥ sms_high и P_url,max ≥ t2 URL-модели
+  sms_high: 0.8
+  ip_or_punycode_min: 60        # ссылка с IP-адресом или Punycode
+
+# Проверка отдельной ссылки: P_url переводится в шкалу 0–100 кусочно-линейно так, чтобы
+# пороги URL-модели t1 и t2 совпали с границами уровней (35 и 70).
+url_only:
+  use_model_thresholds: true
+
+# Доверенные домены: ссылка на официальный домен из этого списка (точное совпадение регистрируемого
+# домена) получает категорию SAFE независимо от вероятности модели. Модель видит только строку домена и
+# ошибается на коротких популярных доменах (google.com получает P ≈ 0,57), поэтому официальные домены
+# банков и сервисов задаются списком. Похожие домены (kaspl.kz, kaspi-bonus.test) под правило не попадают.
+trusted_domains:
+  enabled: true
+  domains: [kaspi.kz, halykbank.kz, jusan.kz, bcc.kz, forte.kz, homecredit.kz, freedombank.kz, berekebank.kz,
+            egov.kz, kazpost.kz, olx.kz, google.com, gmail.com, youtube.com, facebook.com, instagram.com,
+            whatsapp.com, telegram.org, apple.com, icloud.com, microsoft.com, outlook.com, paypal.com, amazon.com,
+            netflix.com, ebay.com, sberbank.ru, tinkoff.ru, yandex.ru, mail.ru, vk.com, wildberries.ru, ozon.ru,
+            github.com, wikipedia.org]
+
+# Причина «текст похож на мошеннический» выводится, если вклад модели больше этого значения
+reason_min_probability: 0.5
+max_reasons: 6
+
+recommendations:
+  low: >-
+    Явных признаков мошенничества не обнаружено. Всё равно не сообщайте коды из SMS и данные карты
+    и проверяйте неожиданные просьбы о деньгах по известному вам номеру.
+  medium: >-
+    Будьте осторожны: сообщение содержит подозрительные признаки. Не переходите по ссылкам и не перезванивайте
+    по номерам из сообщения — проверьте информацию в официальном приложении или по номеру с обратной стороны карты.
+  high: >-
+    Не переходите по ссылке, не сообщайте коды и данные карты, не переводите деньги. Свяжитесь с банком
+    или отправителем по номеру с обратной стороны карты или из официального приложения.
+
+url_recommendations:
+  low: Явных признаков опасности не найдено, но вводите пароль только на сайте, адрес которого набрали сами.
+  medium: Не вводите пароль и данные карты. Откройте сайт вручную, набрав известный вам адрес.
+  high: Не открывайте ссылку и не вводите никакие данные. Скорее всего, это фишинговый сайт.

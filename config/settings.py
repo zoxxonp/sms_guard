@@ -89,6 +89,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/login/"
 
 # --- Cookie и сессии (ФТ-1.8) ------------------------------------------------
 SESSION_COOKIE_HTTPONLY = True
@@ -97,6 +99,11 @@ SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")  # True при работе
 CSRF_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE")
 X_FRAME_OPTIONS = "DENY"
+CSRF_FAILURE_VIEW = "apps.accounts.views.csrf_failure"   # JSON-ошибка для /api/, страница для остального
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 60 * 60 * 8                        # 8 часов
 
 # --- Локализация --------------------------------------------------------------
 LANGUAGE_CODE = "ru"
@@ -113,8 +120,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Django REST Framework ------------------------------------------------------
 REST_FRAMEWORK = {
+    # Сессия + CSRF; без входа — 401 (раздел 4.4)
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
+        "apps.analysis.authentication.SessionAuth401",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -122,6 +130,22 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+    ],
+    # НФТ-6: не более 30 проверок в минуту на пользователя (эндпоинты check/sms и check/url)
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.ScopedRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "checks": "30/min",
+    },
+    "EXCEPTION_HANDLER": "apps.analysis.apiutils.api_exception_handler",
+}
+
+# Кэш: счётчики throttling и блокировки входа (ФТ-1.3). Для нескольких процессов — Redis/Memcached.
+CACHES = {
+    "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache", "LOCATION": "sms-guard"},
 }
 
 # --- Пути к ML-артефактам -----------------------------------------------------

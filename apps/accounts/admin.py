@@ -1,1 +1,8 @@
-from django.contrib import admin  # noqa: F401
+from django.contrib import admin
+
+from .models import UserProfile
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "store_sms_text", "preferred_language")

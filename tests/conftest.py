@@ -64,3 +64,39 @@ def use_toy_predictor(predictor, monkeypatch):
     monkeypatch.setattr(Predictor, "_instance", predictor)
     yield predictor
     Predictor.reset()
+
+
+@pytest.fixture(autouse=True)
+def _clear_cache():
+    """Счётчики throttling и блокировки входа хранятся в кэше — очищаем между тестами."""
+    from django.core.cache import cache
+    cache.clear()
+    yield
+    cache.clear()
+
+
+PASSWORD = "Str0ngPass2026"
+
+
+@pytest.fixture
+def make_user(db):
+    from django.contrib.auth import get_user_model
+
+    def _make(username="alice", password=PASSWORD, **extra):
+        return get_user_model().objects.create_user(username=username, email=f"{username}@example.com",
+                                                    password=password, **extra)
+    return _make
+
+
+@pytest.fixture
+def user(make_user):
+    return make_user()
+
+
+@pytest.fixture
+def api(user, use_toy_predictor):
+    """APIClient с выполненным входом и игрушечными моделями."""
+    from rest_framework.test import APIClient
+    client = APIClient()
+    client.force_login(user)
+    return client

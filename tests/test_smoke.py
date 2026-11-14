@@ -4,7 +4,14 @@ from django.urls import reverse
 
 
 @pytest.mark.django_db
-def test_home_page_opens(client):
+def test_home_requires_login(client):
+    response = client.get(reverse("dashboard:home"))
+    assert response.status_code == 302 and response.url.startswith("/login/")
+
+
+@pytest.mark.django_db
+def test_home_page_opens_for_user(client, user):
+    client.force_login(user)
     response = client.get(reverse("dashboard:home"))
     assert response.status_code == 200
     assert "SMS Guard" in response.content.decode("utf-8")

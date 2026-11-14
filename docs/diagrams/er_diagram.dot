@@ -1,0 +1,53 @@
+// ER-диаграмма SMS Guard (задание 16). Соответствует apps/accounts/models.py и apps/analysis/models.py.
+// Сборка: dot -Tpng docs/diagrams/er_diagram.dot -o docs/figures/16_er_diagram.png
+digraph ER {
+  graph [rankdir=LR, fontname="DejaVu Sans", bgcolor="white", pad=0.3, nodesep=0.5, ranksep=1.0];
+  node  [shape=plain, fontname="DejaVu Sans", fontsize=10];
+  edge  [fontname="DejaVu Sans", fontsize=9, color="#1f3a5f", arrowhead=crow, arrowtail=tee, dir=both];
+
+  users [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#1f3a5f"><font color="white"><b>auth_user</b> (Django)</font></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">username (уникальный)</td></tr>
+    <tr><td align="left">email</td></tr><tr><td align="left">password (PBKDF2-хеш)</td></tr>
+    <tr><td align="left">date_joined</td></tr><tr><td align="left">is_staff</td></tr></table>>];
+
+  profile [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#1f3a5f"><font color="white"><b>user_profile</b></font></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">FK user_id (уникальный)</td></tr>
+    <tr><td align="left">store_sms_text: bool = false</td></tr><tr><td align="left">preferred_language</td></tr></table>>];
+
+  checks [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#1f3a5f"><font color="white"><b>checks</b></font></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">FK user_id</td></tr>
+    <tr><td align="left">check_type: SMS / URL</td></tr><tr><td align="left">input_text (NULL без согласия)</td></tr>
+    <tr><td align="left">input_masked</td></tr><tr><td align="left">input_hash (HMAC)</td></tr>
+    <tr><td align="left">language</td></tr><tr><td align="left">category, risk_level</td></tr>
+    <tr><td align="left">risk_score 0–100</td></tr><tr><td align="left">p_sms, p_url_max (NULL)</td></tr>
+    <tr><td align="left">explanation (JSON), recommendation</td></tr><tr><td align="left">language_note</td></tr>
+    <tr><td align="left">sms_model_version, url_model_version</td></tr><tr><td align="left">processing_ms</td></tr>
+    <tr><td align="left">created_at</td></tr>
+    <tr><td align="left" bgcolor="#eef2f7"><i>индексы: (user_id, created_at), (category)</i></td></tr></table>>];
+
+  urls [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#1f3a5f"><font color="white"><b>url_results</b></font></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">FK check_id (CASCADE)</td></tr>
+    <tr><td align="left">url, domain</td></tr><tr><td align="left">p_url</td></tr><tr><td align="left">category</td></tr>
+    <tr><td align="left">features_json</td></tr></table>>];
+
+  feats [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#1f3a5f"><font color="white"><b>detected_features</b></font></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">FK check_id (CASCADE)</td></tr>
+    <tr><td align="left">code (URGENCY…)</td></tr><tr><td align="left">title</td></tr><tr><td align="left">weight</td></tr></table>>];
+
+  versions [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#5c6b80"><font color="white"><b>model_versions</b> (справочная)</font></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">model_type: sms / url</td></tr>
+    <tr><td align="left">version, algorithm</td></tr><tr><td align="left">metrics_json, threshold</td></tr>
+    <tr><td align="left">trained_at, is_active</td></tr></table>>];
+
+  users -> profile [label="1 : 1", arrowhead=tee];
+  users -> checks  [label="1 : N"];
+  checks -> urls   [label="1 : N"];
+  checks -> feats  [label="1 : N"];
+  versions -> checks [style=dashed, dir=none, label="версия по строке\n(sms/url_model_version)"];
+}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Удаление проверки{% endblock %}
+{% block content %}
+<h1 class="page-title">Удалить проверку №{{ check.pk }}?</h1>
+<section class="card" style="max-width: 640px">
+  <div class="card-body">
+    <dl class="row small">
+      <dt class="col-4">Дата</dt><dd class="col-8">{{ check.created_at|date:"d.m.Y H:i" }}</dd>
+      <dt class="col-4">Тип</dt><dd class="col-8">{{ check.get_check_type_display }}</dd>
+      <dt class="col-4">Фрагмент</dt><dd class="col-8 text-break">{{ check.fragment }}</dd>
+      <dt class="col-4">Результат</dt><dd class="col-8">{% include "includes/badge.html" with category=check.category %} · {{ check.risk_score }}/100</dd>
+    </dl>
+    <p>Запись, найденные ссылки и признаки будут удалены безвозвратно.</p>
+    <form method="post" class="d-flex gap-2">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger"><i class="bi bi-trash" aria-hidden="true"></i> Да, удалить</button>
+      <a class="btn btn-outline-secondary" href="{% url 'analysis:check-detail' check.pk %}">Отмена</a>
+    </form>
+  </div>
+</section>
+{% endblock %}

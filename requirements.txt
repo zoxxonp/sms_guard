@@ -11,7 +11,7 @@ numpy==2.1.*
 scikit-learn==1.5.*
 joblib==1.4.*
 PyYAML==6.0.*
-pyarrow==17.0.*               # parquet для матрицы признаков URL
+pyarrow==17.0.*               # parquet for the URL feature matrix
 
 # NLP and URL parsing
 nltk==3.9.*
@@ -26,3 +26,6 @@ matplotlib==3.9.*
 pytest==8.3.*
 pytest-django==4.9.*
 pytest-cov==5.0.*
+
+# Optional: browser checks tests/e2e/ui_checks.py
+#   pip install playwright==1.48.* ; playwright install chromium

@@ -1,0 +1,654 @@
+{
+ "demo": [
+  {
+   "n": 1,
+   "lang": "ru",
+   "text": "Привет! Встречаемся завтра в 18:00 у входа в библиотеку.",
+   "expected": "Безопасное",
+   "status": 200,
+   "category": "SAFE",
+   "risk_level": "LOW",
+   "risk_score": 0,
+   "p_sms": 0.0005,
+   "p_url_max": null,
+   "language": "ru",
+   "features": [],
+   "urls": [],
+   "overrides_hint": [
+    "Явных признаков мошенничества не обнаружено"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 2,
+   "lang": "en",
+   "text": "Your order #4821 has been shipped and will arrive on Monday.",
+   "expected": "Безопасное",
+   "status": 200,
+   "category": "SAFE",
+   "risk_level": "LOW",
+   "risk_score": 1,
+   "p_sms": 0.0141,
+   "p_url_max": null,
+   "language": "en",
+   "features": [],
+   "urls": [],
+   "overrides_hint": [
+    "Явных признаков мошенничества не обнаружено"
+   ],
+   "language_note": null
+  },
+  {
+   "n": 3,
+   "lang": "kk",
+   "text": "Сәлем! Ертең сағат 10:00-де кездесеміз бе?",
+   "expected": "Безопасное (с предупреждением о языке)",
+   "status": 200,
+   "category": "SAFE",
+   "risk_level": "LOW",
+   "risk_score": 0,
+   "p_sms": 0.0004,
+   "p_url_max": null,
+   "language": "kk",
+   "features": [],
+   "urls": [],
+   "overrides_hint": [
+    "Явных признаков мошенничества не обнаружено"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 4,
+   "lang": "ru",
+   "text": "Ваш код подтверждения: 4821. Никому не сообщайте этот код.",
+   "expected": "Безопасное или подозрительное",
+   "status": 200,
+   "category": "SAFE",
+   "risk_level": "LOW",
+   "risk_score": 0,
+   "p_sms": 0.0023,
+   "p_url_max": null,
+   "language": "ru",
+   "features": [],
+   "urls": [],
+   "overrides_hint": [
+    "Явных признаков мошенничества не обнаружено"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 5,
+   "lang": "ru",
+   "text": "Ваша карта заблокирована! Срочно подтвердите данные по ссылке: http://secure-bank-verify.example/login",
+   "expected": "Мошенническое",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": 1.0,
+   "p_url_max": 0.9987,
+   "language": "ru",
+   "features": [
+    "URGENCY",
+    "BANK_CARD",
+    "ACCOUNT_BLOCK",
+    "LINK_REQUEST"
+   ],
+   "urls": [
+    [
+     "http://secure-bank-verify.example/login",
+     "DANGEROUS",
+     0.9987
+    ]
+   ],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 1.00)",
+    "Ссылка в сообщении похожа на опасную (вероятность по URL-модели 1.00)"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 6,
+   "lang": "en",
+   "text": "URGENT: Your account will be suspended in 24 hours. Verify now at http://192.0.2.15/account-update",
+   "expected": "Мошенническое",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": 0.9996,
+   "p_url_max": 1.0,
+   "language": "en",
+   "features": [
+    "URGENCY",
+    "BANK_CARD",
+    "ACCOUNT_BLOCK",
+    "LINK_REQUEST"
+   ],
+   "urls": [
+    [
+     "http://192.0.2.15/account-update",
+     "DANGEROUS",
+     1.0
+    ]
+   ],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 1.00)",
+    "Ссылка в сообщении похожа на опасную (вероятность по URL-модели 1.00)"
+   ],
+   "language_note": null
+  },
+  {
+   "n": 7,
+   "lang": "ru",
+   "text": "Мама, у меня проблемы, срочно переведи 50 000 на этот номер, потом всё объясню. Никому не говори.",
+   "expected": "Мошенническое (без ссылки)",
+   "status": 200,
+   "category": "SUSPICIOUS",
+   "risk_level": "MEDIUM",
+   "risk_score": 65,
+   "p_sms": 0.6423,
+   "p_url_max": null,
+   "language": "ru",
+   "features": [
+    "URGENCY",
+    "MONEY_TRANSFER"
+   ],
+   "urls": [],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 0.64)",
+    "Требование срочного действия: «срочн»"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 8,
+   "lang": "en",
+   "text": "Congratulations! You won a $1000 gift card. Claim your prize: bit.ly/prize-claim-test",
+   "expected": "Мошенническое",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": 1.0,
+   "p_url_max": 1.0,
+   "language": "en",
+   "features": [
+    "BANK_CARD",
+    "PRIZE",
+    "LINK_REQUEST"
+   ],
+   "urls": [
+    [
+     "bit.ly/prize-claim-test",
+     "DANGEROUS",
+     1.0
+    ]
+   ],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 1.00)",
+    "Ссылка в сообщении похожа на опасную (вероятность по URL-модели 1.00)"
+   ],
+   "language_note": null
+  },
+  {
+   "n": 9,
+   "lang": "ru",
+   "text": "Сотрудник службы безопасности банка: назовите код из SMS для отмены подозрительной операции.",
+   "expected": "Мошенническое (CODE_REQUEST)",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": 0.9933,
+   "p_url_max": null,
+   "language": "ru",
+   "features": [
+    "BANK_CARD",
+    "ACCOUNT_BLOCK",
+    "CODE_REQUEST"
+   ],
+   "urls": [],
+   "overrides_hint": [
+    "Просьба сообщить код из SMS или пароль: «назовите код»",
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 0.99)"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 10,
+   "lang": "kk",
+   "text": "Картаңыз бұғатталды. Жедел түрде мына сілтеме арқылы растаңыз: http://bank-kz-verify.test",
+   "expected": "Подозрительное или мошенническое",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": 0.9999,
+   "p_url_max": 0.988,
+   "language": "kk",
+   "features": [
+    "URGENCY",
+    "BANK_CARD",
+    "ACCOUNT_BLOCK",
+    "LINK_REQUEST"
+   ],
+   "urls": [
+    [
+     "http://bank-kz-verify.test",
+     "DANGEROUS",
+     0.988
+    ]
+   ],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 1.00)",
+    "Ссылка в сообщении похожа на опасную (вероятность по URL-модели 0.99)"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 11,
+   "lang": "ru",
+   "text": "Ваша посылка ожидает оплаты таможенного сбора 350 T: http://post-delivery-pay.example",
+   "expected": "Подозрительное или мошенническое",
+   "status": 200,
+   "category": "SUSPICIOUS",
+   "risk_level": "MEDIUM",
+   "risk_score": 52,
+   "p_sms": 0.5487,
+   "p_url_max": 0.9445,
+   "language": "ru",
+   "features": [],
+   "urls": [
+    [
+     "http://post-delivery-pay.example",
+     "DANGEROUS",
+     0.9445
+    ]
+   ],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 0.55)",
+    "Ссылка в сообщении похожа на опасную (вероятность по URL-модели 0.94)"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 12,
+   "lang": "URL",
+   "text": "https://www.example.com/about",
+   "expected": "Безопасная ссылка",
+   "status": 200,
+   "category": "SAFE",
+   "risk_level": "LOW",
+   "risk_score": 4,
+   "p_sms": null,
+   "p_url_max": 0.0254,
+   "language": null,
+   "features": [],
+   "urls": [
+    [
+     "https://www.example.com/about",
+     "SAFE",
+     0.0254
+    ]
+   ],
+   "overrides_hint": [
+    "Явных признаков опасной ссылки не обнаружено"
+   ],
+   "language_note": null
+  },
+  {
+   "n": 13,
+   "lang": "URL",
+   "text": "http://xn--exmple-cua.test/secure/login?verify=1",
+   "expected": "Опасная ссылка",
+   "status": 200,
+   "category": "DANGEROUS",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": null,
+   "p_url_max": 1.0,
+   "language": null,
+   "features": [
+    "HAS_PUNYCODE"
+   ],
+   "urls": [
+    [
+     "http://xn--exmple-cua.test/secure/login?verify=1",
+     "DANGEROUS",
+     1.0
+    ]
+   ],
+   "overrides_hint": [
+    "Ссылка похожа на опасную (вероятность по URL-модели 1.00)",
+    "Домен записан в Punycode (xn--) — так маскируют похожие на бренды адреса"
+   ],
+   "language_note": null
+  }
+ ],
+ "extra": [
+  {
+   "n": 14,
+   "lang": "ru",
+   "text": "Добрый день! Напоминаем о записи к стоматологу в четверг в 15:30. Клиника «Улыбка».",
+   "expected": "Безопасное",
+   "status": 200,
+   "category": "SAFE",
+   "risk_level": "LOW",
+   "risk_score": 0,
+   "p_sms": 0.0012,
+   "p_url_max": null,
+   "language": "ru",
+   "features": [],
+   "urls": [],
+   "overrides_hint": [
+    "Явных признаков мошенничества не обнаружено"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 15,
+   "lang": "ru",
+   "text": "Вам начислен кешбэк 25 000 тг! Чтобы получить, введите данные карты: http://cashback-kz.test/get",
+   "expected": "Мошенническое",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 95,
+   "p_sms": 1.0,
+   "p_url_max": 0.7576,
+   "language": "ru",
+   "features": [
+    "BANK_CARD",
+    "PRIZE",
+    "LINK_REQUEST"
+   ],
+   "urls": [
+    [
+     "http://cashback-kz.test/get",
+     "DANGEROUS",
+     0.7576
+    ]
+   ],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 1.00)",
+    "Ссылка в сообщении похожа на опасную (вероятность по URL-модели 0.76)"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 16,
+   "lang": "kk",
+   "text": "Құрметті клиент, сіздің шотыңыз бұғатталды. Кодты бізге жіберіңіз.",
+   "expected": "Мошенническое",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 97,
+   "p_sms": 0.9663,
+   "p_url_max": null,
+   "language": "kk",
+   "features": [
+    "BANK_CARD",
+    "ACCOUNT_BLOCK",
+    "CODE_REQUEST"
+   ],
+   "urls": [],
+   "overrides_hint": [
+    "Просьба сообщить код из SMS или пароль: «кодты бізге жібер»",
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 0.97)"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  {
+   "n": 17,
+   "lang": "en",
+   "text": "Hi Sam, the meeting moved to 3pm. Bring the slides please.",
+   "expected": "Безопасное",
+   "status": 200,
+   "category": "SAFE",
+   "risk_level": "LOW",
+   "risk_score": 0,
+   "p_sms": 0.0014,
+   "p_url_max": null,
+   "language": "en",
+   "features": [],
+   "urls": [],
+   "overrides_hint": [
+    "Явных признаков мошенничества не обнаружено"
+   ],
+   "language_note": null
+  }
+ ],
+ "scenarios": {
+  "a": {
+   "n": 1,
+   "lang": "ru",
+   "text": "Привет! Встречаемся завтра в 18:00 у входа в библиотеку.",
+   "expected": "Безопасное",
+   "status": 200,
+   "category": "SAFE",
+   "risk_level": "LOW",
+   "risk_score": 0,
+   "p_sms": 0.0005,
+   "p_url_max": null,
+   "language": "ru",
+   "features": [],
+   "urls": [],
+   "overrides_hint": [
+    "Явных признаков мошенничества не обнаружено"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  "b": {
+   "n": 7,
+   "lang": "ru",
+   "text": "Мама, у меня проблемы, срочно переведи 50 000 на этот номер, потом всё объясню. Никому не говори.",
+   "expected": "Мошенническое (без ссылки)",
+   "status": 200,
+   "category": "SUSPICIOUS",
+   "risk_level": "MEDIUM",
+   "risk_score": 65,
+   "p_sms": 0.6423,
+   "p_url_max": null,
+   "language": "ru",
+   "features": [
+    "URGENCY",
+    "MONEY_TRANSFER"
+   ],
+   "urls": [],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 0.64)",
+    "Требование срочного действия: «срочн»"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  "c": {
+   "n": 5,
+   "lang": "ru",
+   "text": "Ваша карта заблокирована! Срочно подтвердите данные по ссылке: http://secure-bank-verify.example/login",
+   "expected": "Мошенническое",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": 1.0,
+   "p_url_max": 0.9987,
+   "language": "ru",
+   "features": [
+    "URGENCY",
+    "BANK_CARD",
+    "ACCOUNT_BLOCK",
+    "LINK_REQUEST"
+   ],
+   "urls": [
+    [
+     "http://secure-bank-verify.example/login",
+     "DANGEROUS",
+     0.9987
+    ]
+   ],
+   "overrides_hint": [
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 1.00)",
+    "Ссылка в сообщении похожа на опасную (вероятность по URL-модели 1.00)"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  },
+  "d": {
+   "n": 13,
+   "lang": "URL",
+   "text": "http://xn--exmple-cua.test/secure/login?verify=1",
+   "expected": "Опасная ссылка",
+   "status": 200,
+   "category": "DANGEROUS",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": null,
+   "p_url_max": 1.0,
+   "language": null,
+   "features": [
+    "HAS_PUNYCODE"
+   ],
+   "urls": [
+    [
+     "http://xn--exmple-cua.test/secure/login?verify=1",
+     "DANGEROUS",
+     1.0
+    ]
+   ],
+   "overrides_hint": [
+    "Ссылка похожа на опасную (вероятность по URL-модели 1.00)",
+    "Домен записан в Punycode (xn--) — так маскируют похожие на бренды адреса"
+   ],
+   "language_note": null
+  },
+  "e": {
+   "n": 9,
+   "lang": "ru",
+   "text": "Сотрудник службы безопасности банка: назовите код из SMS для отмены подозрительной операции.",
+   "expected": "Мошенническое (CODE_REQUEST)",
+   "status": 200,
+   "category": "FRAUDULENT",
+   "risk_level": "HIGH",
+   "risk_score": 100,
+   "p_sms": 0.9933,
+   "p_url_max": null,
+   "language": "ru",
+   "features": [
+    "BANK_CARD",
+    "ACCOUNT_BLOCK",
+    "CODE_REQUEST"
+   ],
+   "urls": [],
+   "overrides_hint": [
+    "Просьба сообщить код из SMS или пароль: «назовите код»",
+    "Текст похож на мошеннические сообщения (вероятность по SMS-модели 0.99)"
+   ],
+   "language_note": "Для русского и казахского модель обучена на искусственных сообщениях; ложные срабатывания на этих языках встречаются чаще, чем на английском."
+  }
+ },
+ "after_checks": {
+  "history_count": 17,
+  "stats_total": 17
+ },
+ "nft1": {
+  "n": 100,
+  "request_ms_mean": 15.3,
+  "request_ms_p95": 22.2,
+  "request_ms_max": 27.1,
+  "analysis_ms_mean": 8.1,
+  "analysis_ms_max": 18.6
+ },
+ "sms_errors": {
+  "threshold": 0.0478,
+  "fp_total": 48,
+  "fn_total": 3,
+  "fp_by_lang": {
+   "ru": 23,
+   "kk": 17,
+   "en": 8
+  },
+  "fn_by_lang": {
+   "en": 3
+  },
+  "fp": [
+   {
+    "lang": "kk",
+    "text": "Жеткізу қызметі курьері: 20 минуттан кейін жетемін, телефоным 8 000 166 16 79.",
+    "p": 0.9663
+   },
+   {
+    "lang": "kk",
+    "text": "CDEK курьері: 20 минуттан кейін жетемін, телефоным 8 (000) 475-89-28.",
+    "p": 0.9552
+   },
+   {
+    "lang": "kk",
+    "text": "Қазпошта курьері: 20 минуттан кейін жетемін, телефоным +70007467328.",
+    "p": 0.9505
+   },
+   {
+    "lang": "kk",
+    "text": "Пошта курьері: 20 минуттан кейін жетемін, телефоным 8 000 819 72 92.",
+    "p": 0.9423
+   },
+   {
+    "lang": "ru",
+    "text": "Курьер Доставка: буду у вас через 20 минут, телефон +70002977169.",
+    "p": 0.8707
+   },
+   {
+    "lang": "ru",
+    "text": "Курьер Казпочта: буду у вас через 20 минут, телефон 8 000 976 59 75.",
+    "p": 0.8621
+   },
+   {
+    "lang": "ru",
+    "text": "Курьер CDEK: буду у вас через 20 минут, телефон +70009506061. Ждём вас.",
+    "p": 0.7955
+   },
+   {
+    "lang": "ru",
+    "text": "Курьер Почта: буду у вас через 20 минут, телефон 8 (000) 202-53-10. Ждём вас.",
+    "p": 0.7887
+   },
+   {
+    "lang": "en",
+    "text": "Tell your friends what you plan to do on Valentines day @ &lt;URL&gt;",
+    "p": 0.7682
+   },
+   {
+    "lang": "en",
+    "text": "Message:some text missing* Sender:Name Missing* *Number Missing *Sent:Date missing *Missing U a lot thats y everything is missing sent via fullonsms.com",
+    "p": 0.7206
+   },
+   {
+    "lang": "en",
+    "text": "Good evening Sir, Al Salam Wahleykkum.sharing a happy news.By the grace of God, i got an offer from Tayseer,TISSCO and i joined.Hope you are fine.Inshah Allah,meet you sometime.Rakhesh,visitor from India.",
+    "p": 0.5204
+   },
+   {
+    "lang": "en",
+    "text": "We are pleased to inform that your application for Airtel Broadband is processed successfully. Your installation will happen within 3 days.",
+    "p": 0.3788
+   }
+  ],
+  "fn": [
+   {
+    "lang": "en",
+    "text": "Do you ever notice that when you're driving, anyone going slower than you is an idiot and everyone driving faster than you is a maniac?",
+    "p": 0.0002
+   },
+   {
+    "lang": "en",
+    "text": "0A$NETWORKS allow companies to bill for SMS, so they are responsible for their \"suppliers\", just as a shop has to give a guarantee on what they sell. B. G.",
+    "p": 0.0072
+   },
+   {
+    "lang": "en",
+    "text": "Latest News! Police station toilet stolen, cops have nothing to go on!",
+    "p": 0.0107
+   }
+  ]
+ }
+}

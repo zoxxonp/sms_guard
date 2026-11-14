@@ -42,7 +42,13 @@ def default_model_paths() -> tuple[Path, Path]:
     """Итоговая модель задания 8, если она обучена; иначе многоязычная baseline; иначе английская."""
     for model, meta in ((SMS_MODEL_PATH, SMS_MODEL_META_PATH), (MULTI_PATH, MULTI_META_PATH)):
         if model.exists():
+            if model != SMS_MODEL_PATH:
+                logger.warning("Итоговая SMS-модель %s не найдена — используется базовая %s. "
+                               "Обучите итоговую: python -m ml.train_sms", SMS_MODEL_PATH.name, model.name)
             return model, meta
+    if not SMS_MODEL_PATH.exists():
+        logger.warning("Итоговая SMS-модель %s не найдена — пробуем базовую %s", SMS_MODEL_PATH.name,
+                       BASELINE_PATH.name)
     return BASELINE_PATH, BASELINE_META_PATH
 
 

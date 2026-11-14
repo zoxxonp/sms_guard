@@ -6,8 +6,8 @@ version: 1.0.0
 # RiskScore = 100 · (w_sms·P_sms + w_url·P_url,max + w_se·S_se) / (w_sms + w_url·[URL есть] + w_se),
 # S_se = min(k / se_saturation, 1), k — число сработавших групп социальной инженерии.
 weights:
-  w_sms: 0.5
-  w_url: 0.3
+  w_sms: 0.6
+  w_url: 0.2
   w_se: 0.2
 se_saturation: 3
 

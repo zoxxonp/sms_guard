@@ -1,0 +1,136 @@
+{
+  "model": "url_model",
+  "version": "1.0.0",
+  "algorithm": "Logistic Regression",
+  "params": {
+    "C": 10
+  },
+  "features": [
+    "host_length",
+    "n_dots",
+    "n_subdomains",
+    "n_hyphens_host",
+    "n_digits",
+    "digit_ratio_host",
+    "n_special",
+    "has_ip",
+    "nonstandard_port",
+    "is_shortener",
+    "n_suspicious_words",
+    "has_punycode",
+    "mixed_scripts",
+    "brand_similarity",
+    "host_entropy",
+    "suspicious_tld",
+    "brand_in_url",
+    "char 2-5-граммы домена (TF-IDF)"
+  ],
+  "input": "ml.url_features.model_input(url) — 17 признаков канонического домена + сам домен",
+  "thresholds": {
+    "t1": 0.2003,
+    "t2": 0.6638
+  },
+  "threshold": 0.2003,
+  "categories": {
+    "SAFE": "P < 0.2003",
+    "SUSPICIOUS": "0.2003 ≤ P < 0.6638",
+    "DANGEROUS": "P ≥ 0.6638"
+  },
+  "threshold_rules": {
+    "t1": "максимальный порог на validation с Recall ≥ 0.85",
+    "t2": "минимальный порог на validation с Precision ≥ 0.9"
+  },
+  "trained_on": "train (70098 URL, PhiUSIIL, разбиение по домену)",
+  "metrics_validation": {
+    "threshold": 0.2003,
+    "n": 14052,
+    "accuracy": 0.7495,
+    "precision": 0.595,
+    "recall": 0.8499,
+    "f1": 0.7,
+    "f2": 0.7828,
+    "f1_macro": 0.7425,
+    "roc_auc": 0.8914,
+    "pr_auc": 0.8718,
+    "confusion_matrix": {
+      "tn": 6426,
+      "fp": 2795,
+      "fn": 725,
+      "tp": 4106
+    }
+  },
+  "metrics_test": {
+    "at_t1": {
+      "threshold": 0.2003,
+      "n": 15850,
+      "accuracy": 0.7845,
+      "precision": 0.681,
+      "recall": 0.8942,
+      "f1": 0.7731,
+      "f2": 0.8415,
+      "f1_macro": 0.7839,
+      "roc_auc": 0.9206,
+      "pr_auc": 0.9211,
+      "confusion_matrix": {
+        "tn": 6613,
+        "fp": 2727,
+        "fn": 689,
+        "tp": 5821
+      }
+    },
+    "at_t2": {
+      "threshold": 0.6638,
+      "n": 15850,
+      "accuracy": 0.8737,
+      "precision": 0.9348,
+      "recall": 0.7444,
+      "f1": 0.8288,
+      "f2": 0.776,
+      "f1_macro": 0.8644,
+      "roc_auc": 0.9206,
+      "pr_auc": 0.9211,
+      "confusion_matrix": {
+        "tn": 9002,
+        "fp": 338,
+        "fn": 1664,
+        "tp": 4846
+      }
+    },
+    "at_0_5": {
+      "threshold": 0.5,
+      "n": 15850,
+      "accuracy": 0.8695,
+      "precision": 0.8783,
+      "recall": 0.7919,
+      "f1": 0.8329,
+      "f2": 0.8078,
+      "f1_macro": 0.8629,
+      "roc_auc": 0.9206,
+      "pr_auc": 0.9211,
+      "confusion_matrix": {
+        "tn": 8626,
+        "fp": 714,
+        "fn": 1355,
+        "tp": 5155
+      }
+    },
+    "categories": {
+      "SAFE": {
+        "safe": 6613,
+        "phishing": 689
+      },
+      "SUSPICIOUS": {
+        "safe": 2389,
+        "phishing": 975
+      },
+      "DANGEROUS": {
+        "safe": 338,
+        "phishing": 4846
+      }
+    }
+  },
+  "predict_ms_per_url": 3.14,
+  "trained_at": "2026-11-14 10:39",
+  "python": "3.13.18",
+  "sklearn": "1.9.1"
+}

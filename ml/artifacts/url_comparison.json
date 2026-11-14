@@ -1,0 +1,137 @@
+{
+ "algorithms": [
+  {
+   "name": "logreg",
+   "title": "Logistic Regression",
+   "best_params": {
+    "C": 10
+   },
+   "cv_f2": 0.7799,
+   "t1": 0.2003,
+   "t2": 0.6638,
+   "val_at_0_5": {
+    "threshold": 0.5,
+    "n": 14052,
+    "accuracy": 0.8496,
+    "precision": 0.8176,
+    "recall": 0.7239,
+    "f1": 0.7679,
+    "f2": 0.7409,
+    "f1_macro": 0.8283,
+    "roc_auc": 0.8914,
+    "pr_auc": 0.8718,
+    "confusion_matrix": {
+     "tn": 8441,
+     "fp": 780,
+     "fn": 1334,
+     "tp": 3497
+    }
+   },
+   "val_at_t1": {
+    "threshold": 0.2003,
+    "n": 14052,
+    "accuracy": 0.7495,
+    "precision": 0.595,
+    "recall": 0.8499,
+    "f1": 0.7,
+    "f2": 0.7828,
+    "f1_macro": 0.7425,
+    "roc_auc": 0.8914,
+    "pr_auc": 0.8718,
+    "confusion_matrix": {
+     "tn": 6426,
+     "fp": 2795,
+     "fn": 725,
+     "tp": 4106
+    }
+   },
+   "val_at_t2": {
+    "threshold": 0.6638,
+    "n": 14052,
+    "accuracy": 0.8598,
+    "precision": 0.9001,
+    "recall": 0.6661,
+    "f1": 0.7656,
+    "f2": 0.7027,
+    "f1_macro": 0.8328,
+    "roc_auc": 0.8914,
+    "pr_auc": 0.8718,
+    "confusion_matrix": {
+     "tn": 8864,
+     "fp": 357,
+     "fn": 1613,
+     "tp": 3218
+    }
+   },
+   "fit_seconds": 90.6,
+   "predict_ms": 3.14
+  },
+  {
+   "name": "random_forest",
+   "title": "Random Forest",
+   "best_params": {
+    "min_samples_leaf": 5
+   },
+   "cv_f2": 0.7382,
+   "t1": 0.2764,
+   "t2": 0.5082,
+   "val_at_0_5": {
+    "threshold": 0.5,
+    "n": 14052,
+    "accuracy": 0.8576,
+    "precision": 0.8948,
+    "recall": 0.6638,
+    "f1": 0.7622,
+    "f2": 0.7,
+    "f1_macro": 0.8303,
+    "roc_auc": 0.8862,
+    "pr_auc": 0.8673,
+    "confusion_matrix": {
+     "tn": 8844,
+     "fp": 377,
+     "fn": 1624,
+     "tp": 3207
+    }
+   },
+   "val_at_t1": {
+    "threshold": 0.2764,
+    "n": 14052,
+    "accuracy": 0.7388,
+    "precision": 0.5823,
+    "recall": 0.8501,
+    "f1": 0.6912,
+    "f2": 0.7785,
+    "f1_macro": 0.7325,
+    "roc_auc": 0.8862,
+    "pr_auc": 0.8673,
+    "confusion_matrix": {
+     "tn": 6275,
+     "fp": 2946,
+     "fn": 724,
+     "tp": 4107
+    }
+   },
+   "val_at_t2": {
+    "threshold": 0.5082,
+    "n": 14052,
+    "accuracy": 0.8574,
+    "precision": 0.9001,
+    "recall": 0.6582,
+    "f1": 0.7604,
+    "f2": 0.6956,
+    "f1_macro": 0.8294,
+    "roc_auc": 0.8862,
+    "pr_auc": 0.8673,
+    "confusion_matrix": {
+     "tn": 8868,
+     "fp": 353,
+     "fn": 1651,
+     "tp": 3180
+    }
+   },
+   "fit_seconds": 362.0,
+   "predict_ms": 44.09
+  }
+ ],
+ "best": "logreg"
+}

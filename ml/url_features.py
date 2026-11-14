@@ -26,7 +26,7 @@ from urllib.parse import parse_qsl, urlsplit
 import tldextract
 
 __all__ = [
-    "FEATURE_NAMES", "MODEL_FEATURES", "canonical_url", "model_features", "InvalidURLError", "ValidationResult", "validate_url", "extract_url_features",
+    "FEATURE_NAMES", "MODEL_FEATURES", "MODEL_TEXT_COLUMN", "canonical_url", "model_features", "model_input", "InvalidURLError", "ValidationResult", "validate_url", "extract_url_features",
     "explain_url", "registered_domain", "SHORTENERS", "BRAND_DOMAINS", "SUSPICIOUS_TLDS",
 ]
 
@@ -350,6 +350,16 @@ def model_features(url: str) -> dict[str, float]:
     """Признаки для URL-модели: extract_url_features по канонической форме, только MODEL_FEATURES."""
     full = extract_url_features(canonical_url(url))
     return {name: full[name] for name in MODEL_FEATURES}
+
+
+MODEL_TEXT_COLUMN = "host"   # канонический домен — для символьных n-грамм (TF-IDF) в URL-модели
+
+
+def model_input(url: str) -> dict:
+    """Строка входа URL-модели: 17 числовых признаков домена + сам домен (для символьных n-грамм)."""
+    row = model_features(url)
+    row[MODEL_TEXT_COLUMN] = canonical_url(url).replace("http://", "", 1)
+    return row
 
 
 def suspicious_words_in(url: str) -> list[str]:

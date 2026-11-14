@@ -1,33 +1,87 @@
 {% extends "base.html" %}
-
-{% block title %}Главная{% endblock %}
-
+{% load static %}
+{% block title %}Dashboard{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-8">
-    <div class="p-4 p-md-5 bg-body-tertiary rounded-3 border">
-      <h1 class="h3 mb-3">
-        <i class="bi bi-shield-lock" aria-hidden="true"></i>
-        Интеллектуальная система обнаружения мошеннических SMS
-      </h1>
-      <p class="lead mb-4">
-        SMS Guard анализирует текст сообщения и ссылки в нём с помощью моделей
-        машинного обучения, рассчитывает уровень риска и объясняет результат.
-      </p>
-      <div class="alert alert-secondary mb-4" role="status">
-        <i class="bi bi-tools" aria-hidden="true"></i>
-        Проект в разработке: каркас приложения готов, модули анализа появятся в следующих заданиях.
-      </div>
-      <ul class="list-unstyled mb-0">
-        <li><i class="bi bi-check2 text-success" aria-hidden="true"></i> Проверка SMS: текст + до 3 ссылок</li>
-        <li><i class="bi bi-check2 text-success" aria-hidden="true"></i> Проверка URL без открытия ссылки</li>
-        <li><i class="bi bi-check2 text-success" aria-hidden="true"></i> Risk Score 0–100 с объяснением причин</li>
-        <li><i class="bi bi-check2 text-success" aria-hidden="true"></i> История проверок и статистика</li>
-      </ul>
-    </div>
-    <p class="text-muted small mt-3">
-      Состояние сервиса: <code>GET /api/v1/health/</code>
-    </p>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="page-title mb-0"><i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+    {% if is_admin %}<span class="badge text-bg-secondary fs-6 align-middle">все пользователи</span>{% endif %}</h1>
+  {% include "includes/period.html" %}
+</div>
+<div id="load-error" class="alert alert-danger" role="alert" hidden></div>
+
+<div id="empty" class="empty-state" hidden>
+  <i class="bi bi-shield-plus" aria-hidden="true"></i>
+  <p>Пока нет ни одной проверки. Проверьте первое сообщение — здесь появятся счётчики и графики.</p>
+  <div class="d-flex gap-2 justify-content-center">
+    <a class="btn btn-guard" href="{% url 'analysis:check-sms' %}">Проверить SMS</a>
+    <a class="btn btn-outline-guard" href="{% url 'analysis:check-url' %}">Проверить ссылку</a>
   </div>
 </div>
+
+<div id="dashboard" hidden>
+  <p class="small text-body-secondary mb-2" id="total-line" aria-live="polite"></p>
+  <div class="row g-3 mb-3" id="cards"></div>
+  <div class="row g-3 mb-3">
+    <div class="col-lg-4"><div class="card chart-card"><div class="card-body"><div id="chart-categories" class="chart" role="img" aria-label="Кольцевая диаграмма распределения категорий"></div></div></div></div>
+    <div class="col-lg-8"><div class="card chart-card"><div class="card-body"><div id="chart-daily" class="chart" role="img" aria-label="График числа проверок по дням с разбивкой по категориям"></div></div></div></div>
+  </div>
+  <div class="row g-3 mb-3">
+    <div class="col-lg-6"><div class="card chart-card"><div class="card-body">
+      <div id="chart-features" class="chart" role="img" aria-label="Столбчатая диаграмма топ-5 признаков социальной инженерии"></div>
+      <p id="features-empty" class="small text-body-secondary" hidden>За период признаки социальной инженерии не срабатывали.</p>
+    </div></div></div>
+    <div class="col-lg-6"><section class="card h-100" aria-labelledby="recent-title"><div class="card-body">
+      <h2 class="h6" id="recent-title">Последние проверки</h2>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th scope="col">Дата</th><th scope="col">Тип</th><th scope="col">Фрагмент</th><th scope="col" class="text-end">Risk</th><th scope="col">Результат</th></tr></thead>
+          <tbody id="recent"></tbody>
+        </table>
+      </div>
+      <a class="small" href="{% url 'analysis:history' %}">Вся история <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    </div></section></div>
+  </div>
+  <section class="card" id="models" aria-labelledby="models-title" hidden><div class="card-body">
+    <h2 class="h6" id="models-title">Активные версии моделей (метрики на test)</h2>
+    <div class="table-responsive"><table class="table table-sm mb-0">
+      <thead><tr><th>Модель</th><th>Версия</th><th>Алгоритм</th><th>Порог</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th><th>Обучена</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <p class="form-text mb-0">SMS — все языки test при выбранном пороге; URL — при пороге t1.</p>
+  </div></section>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'vendor/plotly/plotly-basic.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>
+(() => {
+  const errorBox = document.getElementById("load-error");
+  async function render(days) {
+    try {
+      const data = await GuardCharts.load(days);
+      errorBox.hidden = true;
+      document.getElementById("empty").hidden = data.has_checks;
+      document.getElementById("dashboard").hidden = !data.has_checks;
+      if (!data.has_checks) return;
+      document.getElementById("total-line").textContent = "Всего проверок за " + data.period_days + " дн.: " + data.totals.total +
+        (data.scope === "all" ? " · пользователей: " + data.users_with_checks : "");
+      GuardCharts.cards(document.getElementById("cards"), data);
+      GuardCharts.doughnut(document.getElementById("chart-categories"), data);
+      GuardCharts.daily(document.getElementById("chart-daily"), data);
+      const hasFeatures = data.top_features.length > 0;
+      document.getElementById("features-empty").hidden = hasFeatures;
+      document.getElementById("chart-features").hidden = !hasFeatures;
+      if (hasFeatures) GuardCharts.topFeatures(document.getElementById("chart-features"), data);
+      GuardCharts.recent(document.getElementById("recent"), data);
+      GuardCharts.models(document.getElementById("models"), data);
+    } catch (e) {
+      errorBox.textContent = e.message; errorBox.hidden = false;
+    }
+  }
+  GuardCharts.bindPeriod(document.getElementById("period"), render);
+  render({{ days }});
+})();
+</script>
 {% endblock %}

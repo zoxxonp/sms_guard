@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Статистика{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="page-title mb-0"><i class="bi bi-bar-chart-line" aria-hidden="true"></i> Статистика
+    {% if is_admin %}<span class="badge text-bg-secondary fs-6 align-middle">все пользователи</span>{% endif %}</h1>
+  {% include "includes/period.html" %}
+</div>
+<div id="load-error" class="alert alert-danger" role="alert" hidden></div>
+<div id="empty" class="empty-state" hidden>
+  <i class="bi bi-bar-chart" aria-hidden="true"></i>
+  <p>Нет данных для статистики.</p>
+  <a class="btn btn-guard" href="{% url 'analysis:check-sms' %}">Проверить SMS</a>
+</div>
+<div id="stats" hidden>
+  <div class="row g-3 mb-3" id="cards"></div>
+  <div class="row g-3 mb-3">
+    <div class="col-lg-6"><div class="card chart-card"><div class="card-body"><div id="chart-levels" class="chart" role="img" aria-label="Распределение уровней риска"></div></div></div></div>
+    <div class="col-lg-6"><div class="card chart-card"><div class="card-body"><div id="chart-types" class="chart" role="img" aria-label="Соотношение проверок SMS и ссылок"></div></div></div></div>
+  </div>
+  <div class="row g-3 mb-3">
+    <div class="col-12"><div class="card chart-card"><div class="card-body"><div id="chart-daily" class="chart" role="img" aria-label="Проверки по дням, столбцы с накоплением по категориям"></div></div></div></div>
+  </div>
+  <div class="row g-3">
+    <div class="col-lg-6"><div class="card chart-card"><div class="card-body"><div id="chart-categories" class="chart" role="img" aria-label="Распределение категорий"></div></div></div></div>
+    <div class="col-lg-6"><div class="card chart-card"><div class="card-body">
+      <div id="chart-features" class="chart" role="img" aria-label="Топ-5 признаков социальной инженерии"></div>
+      <p id="features-empty" class="small text-body-secondary" hidden>За период признаки социальной инженерии не срабатывали.</p>
+    </div></div></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'vendor/plotly/plotly-basic.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>
+(() => {
+  const errorBox = document.getElementById("load-error");
+  async function render(days) {
+    try {
+      const data = await GuardCharts.load(days);
+      errorBox.hidden = true;
+      document.getElementById("empty").hidden = data.has_checks;
+      document.getElementById("stats").hidden = !data.has_checks;
+      if (!data.has_checks) return;
+      GuardCharts.cards(document.getElementById("cards"), data);
+      GuardCharts.riskLevels(document.getElementById("chart-levels"), data);
+      GuardCharts.types(document.getElementById("chart-types"), data);
+      GuardCharts.daily(document.getElementById("chart-daily"), data, true);
+      GuardCharts.doughnut(document.getElementById("chart-categories"), data);
+      const hasFeatures = data.top_features.length > 0;
+      document.getElementById("features-empty").hidden = hasFeatures;
+      document.getElementById("chart-features").hidden = !hasFeatures;
+      if (hasFeatures) GuardCharts.topFeatures(document.getElementById("chart-features"), data);
+    } catch (e) {
+      errorBox.textContent = e.message; errorBox.hidden = false;
+    }
+  }
+  GuardCharts.bindPeriod(document.getElementById("period"), render);
+  render({{ days }});
+})();
+</script>
+{% endblock %}

@@ -28,6 +28,8 @@ logs/*
 data/raw/*.zip
 data/raw/url/
 data/processed/*.parquet
+data/processed/url_dataset.csv.gz
+data/processed/url_features.csv.gz
 ml/artifacts/*.joblib
 
 # IDE / ОС

@@ -11,6 +11,7 @@ numpy==2.1.*
 scikit-learn==1.5.*
 joblib==1.4.*
 PyYAML==6.0.*
+pyarrow==17.0.*               # parquet для матрицы признаков URL
 
 # NLP and URL parsing
 nltk==3.9.*

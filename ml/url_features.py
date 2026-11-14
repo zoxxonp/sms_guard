@@ -26,7 +26,7 @@ from urllib.parse import parse_qsl, urlsplit
 import tldextract
 
 __all__ = [
-    "FEATURE_NAMES", "InvalidURLError", "ValidationResult", "validate_url", "extract_url_features",
+    "FEATURE_NAMES", "MODEL_FEATURES", "canonical_url", "model_features", "InvalidURLError", "ValidationResult", "validate_url", "extract_url_features",
     "explain_url", "registered_domain", "SHORTENERS", "BRAND_DOMAINS", "SUSPICIOUS_TLDS",
 ]
 
@@ -58,6 +58,16 @@ FEATURE_NAMES = [
     "n_query_params",        # 22 число параметров запроса
     "brand_in_url",          # 23 название бренда в поддомене/пути при чужом регистрируемом домене
     "path_depth",            # 24 число сегментов пути
+]
+
+# Признаки, которые получает ML-модель (задание 10). Признаки пути, схемы и символа @ исключены:
+# в наборе PhiUSIIL ВСЕ легитимные URL имеют вид https://www.домен без пути, поэтому модель выучила бы
+# правило «есть путь / нет https → фишинг». Модель обучается на канонической форме http://домен
+# (см. canonical_url); исключённые признаки по-прежнему считаются и показываются в объяснении.
+MODEL_FEATURES = [
+    "host_length", "n_dots", "n_subdomains", "n_hyphens_host", "n_digits", "digit_ratio_host",
+    "n_special", "has_ip", "nonstandard_port", "is_shortener", "n_suspicious_words", "has_punycode",
+    "mixed_scripts", "brand_similarity", "host_entropy", "suspicious_tld", "brand_in_url",
 ]
 
 # Не менее 15 сервисов сокращения ссылок
@@ -319,6 +329,27 @@ def _suspicious_matches(lower_url: str, reg_domain: str) -> list[str]:
         own = reg_domain.split(".")[0]
         found = [w for w in found if w not in own]
     return found
+
+
+def canonical_url(url: str) -> str:
+    """Каноническая форма для модели: http://домен[:порт] — без схемы, «www.», пути и запроса.
+
+    Убирает артефакты разметки набора PhiUSIIL (все легитимные URL — https://www.домен).
+    """
+    res = validate_url(url)
+    if not res.ok:
+        raise InvalidURLError(res.error)
+    host = res.host[4:] if res.host.startswith("www.") else res.host
+    port = urlsplit(res.normalized).port
+    if ":" in host and not host.startswith("["):      # IPv6
+        host = f"[{host}]"
+    return f"http://{host}" + (f":{port}" if port else "")
+
+
+def model_features(url: str) -> dict[str, float]:
+    """Признаки для URL-модели: extract_url_features по канонической форме, только MODEL_FEATURES."""
+    full = extract_url_features(canonical_url(url))
+    return {name: full[name] for name in MODEL_FEATURES}
 
 
 def suspicious_words_in(url: str) -> list[str]:

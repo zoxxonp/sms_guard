@@ -253,9 +253,9 @@
       }
     }
   },
-  "train_seconds": 1.22,
-  "predict_ms_per_sms": 4.5,
-  "trained_at": "2026-11-14 10:01",
-  "python": "3.13.18",
-  "sklearn": "1.9.1"
+  "train_seconds": 2.84,
+  "predict_ms_per_sms": 2.77,
+  "trained_at": "2026-11-14 11:53",
+  "python": "3.11.9",
+  "sklearn": "1.5.2"
 }

@@ -100,3 +100,15 @@ def api(user, use_toy_predictor):
     client = APIClient()
     client.force_login(user)
     return client
+
+
+
+@pytest.fixture
+def caplog(caplog):
+    """Logger "sms_guard" has propagate=False in settings.LOGGING, so caplog
+    (which listens on the root logger) saw nothing on Windows. Attach directly."""
+    import logging
+    logger = logging.getLogger("sms_guard")
+    logger.addHandler(caplog.handler)
+    yield caplog
+    logger.removeHandler(caplog.handler)

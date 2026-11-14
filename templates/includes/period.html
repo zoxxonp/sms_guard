@@ -1,0 +1,5 @@
+<div class="btn-group btn-group-sm" role="group" aria-label="Период" id="period">
+  {% for p in periods %}
+    <button type="button" class="btn btn-outline-guard{% if p == days %} active{% endif %}" data-days="{{ p }}" aria-pressed="{% if p == days %}true{% else %}false{% endif %}">{{ p }} дней</button>
+  {% endfor %}
+</div>

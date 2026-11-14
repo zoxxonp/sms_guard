@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Проверка ссылки{% endblock %}
+{% block content %}
+<h1 class="page-title"><i class="bi bi-link-45deg" aria-hidden="true"></i> Проверка ссылки</h1>
+{% if not models.url %}
+  <div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
+    Анализ временно недоступен: модель URL не загружена. Обратитесь к администратору.
+  </div>
+{% endif %}
+<section class="card mb-4" aria-labelledby="url-form-title">
+  <div class="card-body">
+    <h2 class="h6 card-title" id="url-form-title">Адрес ссылки</h2>
+    <form id="url-form" novalidate>
+      <div class="input-group">
+        <label for="url-input" class="visually-hidden">Ссылка</label>
+        <input type="text" id="url-input" class="form-control" placeholder="https://login-account.example.com/update"
+               autocomplete="off" spellcheck="false" inputmode="url" aria-describedby="url-hint url-error">
+        <button type="submit" id="url-submit" class="btn btn-guard" {% if not models.url %}disabled{% endif %}>
+          <span class="spinner-border spinner-border-sm" aria-hidden="true" hidden></span>
+          <span class="btn-label">Проверить ссылку</span>
+        </button>
+      </div>
+      <div id="url-error" class="invalid-feedback d-block" role="alert" hidden></div>
+      <p id="url-hint" class="form-text mb-0"><i class="bi bi-eye-slash" aria-hidden="true"></i>
+        Ссылка не открывается: анализируется только её структура.</p>
+    </form>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <span class="small text-body-secondary align-self-center">Примеры:</span>
+      {% for ex in examples %}
+        <button type="button" class="btn btn-sm btn-outline-secondary example-btn font-monospace" data-url="{{ ex }}">{{ ex }}</button>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<section id="result" class="card result-card" aria-live="polite" aria-label="Результат анализа ссылки" hidden></section>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/app.js' %}"></script>
+<script>
+(() => {
+  const input = document.getElementById("url-input");
+  const errorBox = document.getElementById("url-error");
+  document.querySelectorAll(".example-btn").forEach((btn) => btn.addEventListener("click", () => {
+    input.value = btn.dataset.url; Guard.showError(input, errorBox, null); input.focus();
+  }));
+  Guard.bindCheckForm({
+    form: document.getElementById("url-form"), input, button: document.getElementById("url-submit"),
+    errorBox, resultBox: document.getElementById("result"), endpoint: "/api/v1/check/url/", field: "url",
+    validate: (v) => !v.trim() ? "Введите ссылку" : v.length > 2048 ? "Ссылка длиннее 2048 символов" : null,
+  });
+})();
+</script>
+{% endblock %}

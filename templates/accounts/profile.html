@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+<h1 class="page-title"><i class="bi bi-person-circle" aria-hidden="true"></i> Профиль</h1>
+<div class="row g-4">
+  <div class="col-lg-6">
+    <section class="card h-100" aria-labelledby="profile-data">
+      <div class="card-body">
+        <h2 class="h6 card-title" id="profile-data">Данные пользователя</h2>
+        <dl class="row mb-0 small">
+          <dt class="col-5">Логин</dt><dd class="col-7">{{ user.username }}</dd>
+          <dt class="col-5">E-mail</dt><dd class="col-7">{{ user.email|default:"—" }}</dd>
+          <dt class="col-5">Дата регистрации</dt><dd class="col-7">{{ user.date_joined|date:"d.m.Y H:i" }}</dd>
+          <dt class="col-5">Роль</dt><dd class="col-7">{% if user.is_staff %}Администратор{% else %}Пользователь{% endif %}</dd>
+          <dt class="col-5">Проверок в истории</dt><dd class="col-7">{{ checks_count }}</dd>
+        </dl>
+      </div>
+    </section>
+  </div>
+  <div class="col-lg-6">
+    <section class="card h-100" aria-labelledby="consent-title">
+      <div class="card-body">
+        <h2 class="h6 card-title" id="consent-title">Хранение текстов SMS</h2>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="consent">
+          <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" name="store_sms_text" id="id_store_sms_text"
+                   {% if profile.store_sms_text %}checked{% endif %} aria-describedby="consent-help">
+            <label class="form-check-label" for="id_store_sms_text">{{ consent_form.store_sms_text.label }}</label>
+          </div>
+          <p class="form-text" id="consent-help">{{ consent_form.store_sms_text.help_text }}</p>
+          <button type="submit" class="btn btn-outline-guard btn-sm">Сохранить</button>
+        </form>
+      </div>
+    </section>
+  </div>
+  <div class="col-lg-6">
+    <section class="card h-100" aria-labelledby="password-title">
+      <div class="card-body">
+        <h2 class="h6 card-title" id="password-title">Смена пароля</h2>
+        {% if password_form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">{% for e in password_form.non_field_errors %}{{ e }}{% endfor %}</div>
+        {% endif %}
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="action" value="password">
+          {% include "includes/field.html" with field=password_form.old_password %}
+          {% include "includes/field.html" with field=password_form.new_password1 %}
+          {% include "includes/field.html" with field=password_form.new_password2 %}
+          <button type="submit" class="btn btn-outline-guard btn-sm">Изменить пароль</button>
+        </form>
+      </div>
+    </section>
+  </div>
+  <div class="col-lg-6">
+    <section class="card h-100 border-danger-subtle" aria-labelledby="delete-title">
+      <div class="card-body">
+        <h2 class="h6 card-title text-danger-emphasis" id="delete-title">Удаление истории</h2>
+        <p class="small">Будут удалены все ваши проверки ({{ checks_count }}), найденные ссылки и признаки. Действие необратимо.</p>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="action" value="delete_history">
+          <div class="form-check mb-2">
+            <input class="form-check-input{% if delete_form.confirm.errors %} is-invalid{% endif %}" type="checkbox"
+                   name="confirm" id="id_confirm" {% if delete_form.confirm.errors %}aria-invalid="true" aria-describedby="confirm-error"{% endif %}>
+            <label class="form-check-label small" for="id_confirm">{{ delete_form.confirm.label }}</label>
+            {% if delete_form.confirm.errors %}
+              <div class="invalid-feedback d-block" id="confirm-error">{{ delete_form.confirm.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash" aria-hidden="true"></i> Удалить всю мою историю</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Результат проверки №{{ check.pk }}{% endblock %}
+{% block content %}
+<nav aria-label="Навигация" class="mb-2 small"><a href="{% url 'analysis:history' %}"><i class="bi bi-arrow-left" aria-hidden="true"></i> История</a></nav>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="page-title mb-0">Результат проверки №{{ check.pk }} <span class="text-body-secondary fs-6">({{ check.get_check_type_display }})</span></h1>
+  <a class="btn btn-outline-danger btn-sm" href="{% url 'analysis:check-delete' check.pk %}"><i class="bi bi-trash" aria-hidden="true"></i> Удалить</a>
+</div>
+<section id="result" class="card result-card" aria-label="Результат анализа"></section>
+<noscript><p>Для отображения результата включите JavaScript.</p></noscript>
+{{ data|json_script:"check-data" }}
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/app.js' %}"></script>
+<script>
+  Guard.renderResult(document.getElementById("result"), JSON.parse(document.getElementById("check-data").textContent), { showInput: true });
+</script>
+{% endblock %}

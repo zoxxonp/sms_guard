@@ -1,0 +1,9 @@
+{% extends "auth_base.html" %}
+{% block title %}Запрос отклонён{% endblock %}
+{% block auth_content %}
+<div class="alert alert-warning" role="alert">
+  <i class="bi bi-shield-exclamation" aria-hidden="true"></i>
+  Запрос отклонён защитой от подделки запросов (CSRF). Обновите страницу и повторите действие.
+</div>
+<a class="btn btn-guard w-100" href="/">На главную</a>
+{% endblock %}

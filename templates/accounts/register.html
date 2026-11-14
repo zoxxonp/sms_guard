@@ -1,0 +1,17 @@
+{% extends "auth_base.html" %}
+{% block title %}Регистрация{% endblock %}
+{% block auth_content %}
+<h2 class="h5 mb-3">Регистрация</h2>
+{% if form.non_field_errors %}
+  <div class="alert alert-danger" role="alert">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>
+{% endif %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% include "includes/field.html" with field=form.username %}
+  {% include "includes/field.html" with field=form.email %}
+  {% include "includes/field.html" with field=form.password1 %}
+  {% include "includes/field.html" with field=form.password2 %}
+  <button type="submit" class="btn btn-guard w-100">Создать аккаунт</button>
+</form>
+<p class="text-center small mt-3 mb-0">Уже есть аккаунт? <a href="{% url 'accounts:login' %}">Войти</a></p>
+{% endblock %}

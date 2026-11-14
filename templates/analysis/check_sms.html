@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Проверка SMS{% endblock %}
+{% block content %}
+<h1 class="page-title"><i class="bi bi-chat-left-text" aria-hidden="true"></i> Проверка SMS</h1>
+{% if not models.sms or not models.url %}
+  <div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
+    Анализ временно недоступен: модель {% if not models.sms %}SMS{% else %}URL{% endif %} не загружена. Обратитесь к администратору.
+  </div>
+{% endif %}
+<div class="row g-4">
+  <div class="col-xl-5">
+    <section class="card" aria-labelledby="sms-form-title">
+      <div class="card-body">
+        <h2 class="h6 card-title" id="sms-form-title">Текст сообщения</h2>
+        <form id="sms-form" novalidate>
+          <label for="sms-text" class="visually-hidden">Текст SMS</label>
+          <textarea id="sms-text" class="form-control" rows="7" placeholder="Вставьте текст SMS…"
+                    aria-describedby="sms-counter sms-error"></textarea>
+          <div class="d-flex justify-content-between align-items-start mt-1">
+            <div id="sms-error" class="invalid-feedback d-block" role="alert" hidden></div>
+            <span id="sms-counter" class="form-text ms-auto" aria-live="polite">0/{{ max_length }}</span>
+          </div>
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <button type="submit" id="sms-submit" class="btn btn-guard" {% if not models.sms or not models.url %}disabled{% endif %}>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true" hidden></span>
+              <span class="btn-label">Проверить сообщение</span>
+            </button>
+            <button type="button" id="sms-clear" class="btn btn-outline-secondary">Очистить</button>
+          </div>
+        </form>
+        <div class="mt-4">
+          <h3 class="h6 small text-body-secondary">Примеры (искусственные сообщения)</h3>
+          <div class="d-flex flex-wrap gap-2">
+            {% for ex in examples %}
+              <button type="button" class="btn btn-sm btn-outline-secondary example-btn" data-text="{{ ex.text }}">
+                <i class="bi {{ ex.icon }}" aria-hidden="true"></i> {{ ex.label }}
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+        <p class="form-text mt-3 mb-0"><i class="bi bi-lock" aria-hidden="true"></i>
+          Ссылки из текста не открываются. Без вашего согласия (Профиль) полный текст не сохраняется.</p>
+      </div>
+    </section>
+  </div>
+  <div class="col-xl-7">
+    <section id="result" class="card result-card" aria-live="polite" aria-label="Результат анализа" hidden></section>
+    <div id="result-placeholder" class="result-placeholder">
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <p class="mb-0">Вставьте текст SMS и нажмите «Проверить сообщение».</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/app.js' %}"></script>
+<script>
+(() => {
+  const MAX = {{ max_length }};
+  const text = document.getElementById("sms-text");
+  const counter = document.getElementById("sms-counter");
+  const errorBox = document.getElementById("sms-error");
+  const result = document.getElementById("result");
+  const placeholder = document.getElementById("result-placeholder");
+  const update = () => {
+    counter.textContent = text.value.length + "/" + MAX;
+    counter.classList.toggle("text-danger", text.value.length > MAX);
+  };
+  text.addEventListener("input", update);
+  document.getElementById("sms-clear").addEventListener("click", () => {
+    text.value = ""; update(); Guard.showError(text, errorBox, null);
+    result.hidden = true; result.replaceChildren(); placeholder.hidden = false; text.focus();
+  });
+  document.querySelectorAll(".example-btn").forEach((btn) => btn.addEventListener("click", () => {
+    text.value = btn.dataset.text; update(); Guard.showError(text, errorBox, null); text.focus();
+  }));
+  new MutationObserver(() => { placeholder.hidden = !result.hidden; }).observe(result, { attributes: true, attributeFilter: ["hidden"] });
+  Guard.bindCheckForm({
+    form: document.getElementById("sms-form"), input: text, button: document.getElementById("sms-submit"),
+    errorBox, resultBox: result, endpoint: "/api/v1/check/sms/", field: "text",
+    validate: (v) => !v.trim() ? "Текст SMS не может быть пустым"
+      : v.length > MAX ? "Текст SMS длиннее " + MAX + " символов (сейчас " + v.length + ")" : null,
+  });
+  update();
+})();
+</script>
+{% endblock %}

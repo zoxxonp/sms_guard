@@ -1,15 +1,107 @@
-/* SMS Guard — общие стили. Акцентные цвета используются только для категорий риска. */
+/* SMS Guard — стили. Сдержанная палитра; акцентные цвета только для категорий риска.
+ * Контраст текста не ниже 4,5:1 (проверка — docs/15_ui.md). */
 :root {
   --guard-primary: #1f3a5f;
-  --risk-safe: #198754;
-  --risk-suspicious: #b58105;
-  --risk-fraud: #c62828;
+  --guard-primary-hover: #182e4b;
+  --risk-safe: #146c43;        /* белый текст 6,4:1 */
+  --risk-suspicious: #ffcd39;  /* тёмный текст 11,6:1 */
+  --risk-fraud: #b02a37;       /* белый текст 6,5:1 */
+  --sidebar-width: 236px;
 }
 
-.bg-guard {
-  background-color: var(--guard-primary);
-}
+body { background: #f4f6f9; color: #212529; }
 
-.badge-safe { background-color: var(--risk-safe); }
-.badge-suspicious { background-color: var(--risk-suspicious); }
-.badge-fraud { background-color: var(--risk-fraud); }
+.bg-guard { background-color: var(--guard-primary) !important; }
+
+.btn-guard { --bs-btn-color: #fff; --bs-btn-bg: var(--guard-primary); --bs-btn-border-color: var(--guard-primary);
+  --bs-btn-hover-color: #fff; --bs-btn-hover-bg: var(--guard-primary-hover); --bs-btn-hover-border-color: var(--guard-primary-hover);
+  --bs-btn-active-bg: var(--guard-primary-hover); --bs-btn-disabled-bg: #6c7a8c; --bs-btn-disabled-border-color: #6c7a8c; }
+.btn-outline-guard { --bs-btn-color: var(--guard-primary); --bs-btn-border-color: var(--guard-primary);
+  --bs-btn-hover-color: #fff; --bs-btn-hover-bg: var(--guard-primary); --bs-btn-hover-border-color: var(--guard-primary);
+  --bs-btn-active-color: #fff; --bs-btn-active-bg: var(--guard-primary); --bs-btn-active-border-color: var(--guard-primary); }
+
+.skip-link { position: absolute; left: 1rem; top: 1rem; z-index: 2000; background: #fff; padding: .5rem 1rem; }
+
+/* --- Каркас: боковое меню + содержимое --------------------------------------- */
+.app-layout { display: flex; min-height: 100vh; }
+.app-main { flex: 1; min-width: 0; padding: 1.5rem; display: flex; flex-direction: column; }
+.app-footer { margin-top: auto; padding-top: 2rem; display: flex; flex-wrap: wrap; gap: .5rem; justify-content: space-between; color: #5c636a; }
+
+@media (min-width: 768px) {
+  .sidebar { width: var(--sidebar-width); flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+}
+@media (max-width: 767.98px) {
+  .app-main { padding: 1rem .75rem; }
+}
+.sidebar-brand { align-items: center; gap: .5rem; padding: 1.25rem 1.25rem 1rem; color: #fff; font-weight: 600;
+  font-size: 1.15rem; text-decoration: none; }
+.sidebar-brand:hover { color: #fff; }
+.sidebar-nav .nav-link { color: rgba(255, 255, 255, .85); display: flex; align-items: center; gap: .65rem;
+  padding: .6rem 1.25rem; border-left: 3px solid transparent; }
+.sidebar-nav .nav-link:hover, .sidebar-nav .nav-link:focus { color: #fff; background: rgba(255, 255, 255, .08); }
+.sidebar-nav .nav-link.active { color: #fff; background: rgba(255, 255, 255, .14); border-left-color: #8fb3e0; font-weight: 600; }
+.sidebar-footer { border-top: 1px solid rgba(255, 255, 255, .15); }
+
+.page-title { font-size: 1.4rem; font-weight: 600; margin-bottom: 1rem; color: var(--guard-primary); }
+.card { border: 1px solid #dde2e8; border-radius: .6rem; }
+
+/* --- Вход / регистрация -------------------------------------------------------- */
+.auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;
+  background: linear-gradient(160deg, #1f3a5f 0%, #2d5282 100%); }
+.auth-card { width: 100%; max-width: 420px; }
+.auth-logo { font-size: 2.5rem; color: var(--guard-primary); line-height: 1; }
+
+/* --- Категории риска: цвет + иконка + текст ------------------------------------ */
+.risk-badge { font-weight: 600; font-size: .8rem; padding: .35em .6em; }
+.risk-safe, .bg-risk-safe { background-color: var(--risk-safe) !important; color: #fff !important; }
+.risk-suspicious, .bg-risk-suspicious { background-color: var(--risk-suspicious) !important; color: #1a1a1a !important; }
+.risk-fraud, .bg-risk-fraud { background-color: var(--risk-fraud) !important; color: #fff !important; }
+
+.result-card { overflow: hidden; }
+.result-head { padding: 1rem 1.25rem; border-left: 6px solid; background: #fff; border-bottom: 1px solid #e5e8ec; }
+.risk-border-safe { border-left-color: var(--risk-safe); }
+.risk-border-suspicious { border-left-color: #c99700; }
+.risk-border-fraud { border-left-color: var(--risk-fraud); }
+.result-title { font-size: 1.2rem; font-weight: 700; letter-spacing: .02em; }
+.risk-border-safe .result-title { color: var(--risk-safe); }
+.risk-border-suspicious .result-title { color: #7a5c00; }
+.risk-border-fraud .result-title { color: var(--risk-fraud); }
+.result-sub { margin-top: .25rem; }
+.result-body { padding: 1.25rem; }
+.result-section { margin-top: 1.25rem; }
+.result-section h3 { color: #495057; }
+.score-bar { height: 14px; }
+.score-scale { display: flex; justify-content: space-between; }
+.probs dt, .probs dd { margin-bottom: .2rem; }
+.input-text { white-space: pre-wrap; word-break: break-word; background: #f8f9fa; border: 1px solid #e5e8ec;
+  border-radius: .4rem; padding: .6rem .75rem; }
+.url-list .url-item { padding: .6rem 0; border-top: 1px dashed #dde2e8; }
+.url-list .url-item:first-child { border-top: 0; }
+.url-text { font-family: SFMono-Regular, Menlo, Consolas, monospace; font-size: .88rem; word-break: break-all; color: #343a40;
+  cursor: text; user-select: all; }
+.url-domain { background: #fff3cd; color: #1a1a1a; padding: 0 .15em; border-radius: .2em; font-weight: 700; }
+.url-features { max-width: 520px; }
+.feature-list { list-style: none; padding-left: 0; }
+.feature-list li { padding: .15rem 0; }
+.alert-recommend { background: #e8eef6; border: 1px solid #c6d3e4; color: #1a2b40; }
+.disclaimer { color: #5c636a; }
+.result-placeholder { border: 2px dashed #ccd3db; border-radius: .6rem; padding: 3rem 1rem; text-align: center; color: #5c636a; }
+.result-placeholder .bi { font-size: 2rem; }
+
+/* --- Dashboard ------------------------------------------------------------------ */
+.stat-card { background: #fff; border: 1px solid #dde2e8; border-radius: .6rem; padding: .85rem 1rem; height: 100%;
+  border-top: 4px solid #8fa3bd; }
+.stat-card.stat-safe { border-top-color: var(--risk-safe); }
+.stat-card.stat-suspicious { border-top-color: #c99700; }
+.stat-card.stat-fraud { border-top-color: var(--risk-fraud); }
+.stat-title { font-size: .8rem; color: #5c636a; }
+.stat-value { font-size: 1.6rem; font-weight: 700; color: #212529; }
+.chart { min-height: 300px; width: 100%; }
+.empty-state { text-align: center; padding: 3rem 1rem; color: #495057; background: #fff; border: 1px solid #dde2e8; border-radius: .6rem; }
+.empty-state .bi { font-size: 2.5rem; color: var(--guard-primary); }
+
+/* --- История --------------------------------------------------------------------- */
+.history-table .fragment { max-width: 420px; }
+tr.row-link { cursor: pointer; }
+.fragment { min-width: 12rem; overflow-wrap: anywhere; }
+.sidebar-user { color: rgba(255, 255, 255, .85); }
